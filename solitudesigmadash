@@ -17,7 +17,7 @@ local childAddedConnection = nil
 
 local npcList = {}
 local lastNpcUpdate = 0
-local TP_DELAY = 0.24 -- default 0.24
+local TP_DELAY = 0.18 -- default 0.18
 
 local function updateNpcCache()
     npcList = {}
@@ -192,7 +192,7 @@ local DelayBox = Instance.new("TextBox")
 DelayBox.Size = UDim2.new(0.45, 0, 0, 30)
 DelayBox.Position = UDim2.new(0.5, 0, 0.32, 0)
 DelayBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-DelayBox.Text = "0.24"
+DelayBox.Text = "0.18"
 DelayBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 DelayBox.TextScaled = true
 DelayBox.Font = Enum.Font.GothamBold
@@ -200,11 +200,13 @@ DelayBox.PlaceholderText = "Delay (0-1)"
 DelayBox.Parent = Main
 Instance.new("UICorner", DelayBox).CornerRadius = UDim.new(0, 8)
 
-ToggleBtn.MouseButton1Click:Connect(function()
+local function toggleFeature()
     featureEnabled = not featureEnabled
     ToggleBtn.Text = featureEnabled and "ON" or "OFF"
     ToggleBtn.BackgroundColor3 = featureEnabled and Color3.fromRGB(60, 60, 60) or Color3.fromRGB(100, 100, 100)
-end)
+end
+
+ToggleBtn.MouseButton1Click:Connect(toggleFeature)
 
 DelayBox.FocusLost:Connect(function(enterPressed)
     if enterPressed then
@@ -219,10 +221,19 @@ DelayBox.FocusLost:Connect(function(enterPressed)
 end)
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    -- Nhấn Right Shift để ẩn/hiện UI (chống kẹt khi gõ chat)
     if input.KeyCode == Enum.KeyCode.RightShift then
         if UserInputService:GetFocusedTextBox() then return end
         Main.Visible = not Main.Visible
+        return
+    end
+
+    if gameProcessed then return end
+
+    -- Nhấn T để bật/tắt chức năng
+    if input.KeyCode == Enum.KeyCode.T then
+        toggleFeature()
     end
 end)
 
-print("solitudesigmadash Loaded - 0.24 Delay - Fixed respawn")
+print("solitudesigmadash Loaded - 0.18 Delay - Fixed respawn")
